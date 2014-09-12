@@ -6,6 +6,8 @@
 #include "move.hpp"
 #include "gamestate.hpp"
 #include <vector>
+#include <unordered_map>
+#include <string>
 
 namespace checkers
 {
@@ -21,6 +23,9 @@ public:
 
     int minimax(const GameState &node, int depth, bool max);
     int getScore(const GameState &node);
+
+private:
+	std::unordered_map<std::string, int> scoreMap;
 };
 
 /*namespace checkers*/ }

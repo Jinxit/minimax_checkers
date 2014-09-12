@@ -41,6 +41,11 @@ namespace checkers
 
 	int Player::minimax(const GameState &node, int depth, bool maximizingPlayer)
 	{
+		std::string nodeString = node.toMessage();
+		if (scoreMap.count(nodeString) > 0)
+		{
+			return scoreMap[nodeString];
+		}
 		if (depth == 0 || node.isEOG())
 		{
 			return getScore(node);
@@ -69,6 +74,7 @@ namespace checkers
 	    	}
 	    }
 
+	    scoreMap[nodeString] = bestValue;
 	    return bestValue;
 	}
 
