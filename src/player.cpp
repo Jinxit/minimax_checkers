@@ -22,6 +22,8 @@ namespace checkers
 	     * next state. This skeleton returns a random move instead.
 	     */
 
+	    currentPlayer = pState.getNextPlayer();
+
 	    int maxScore = INT_MIN;
 	 	int maxIndex = -1;
 	 	for (uint i = 0; i < lNextStates.size(); i++)
@@ -88,11 +90,11 @@ namespace checkers
 			auto piece = node.at(i);
 			if (piece & CELL_WHITE)
 			{
-				score++;
+				score += currentPlayer & CELL_WHITE ? 1 : -1;
 			}
 			else if (piece & CELL_RED)
 			{
-				score--;
+				score += currentPlayer & CELL_RED ? 1 : -1;
 			}
 		}
 

@@ -25,6 +25,7 @@ public:
     int getScore(const GameState &node);
 
 private:
+	uint8_t currentPlayer;
 	std::unordered_map<std::string, int> scoreMap;
 };
 
