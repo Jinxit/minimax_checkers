@@ -1,23 +1,97 @@
 #include "player.hpp"
 #include <cstdlib>
+#include <limits.h>
+#include <algorithm>
 
 namespace checkers
 {
 
-GameState Player::play(const GameState &pState,const Deadline &pDue)
-{
-    //std::cerr << "Processing " << pState.toMessage() << std::endl;
+	using std::min;
+	using std::max;
 
-    std::vector<GameState> lNextStates;
-    pState.findPossibleMoves(lNextStates);
+	GameState Player::play(const GameState &pState,const Deadline &pDue)
+	{
+	    //std::cerr << "Processing " << pState.toMessage() << std::endl;
+		std::vector<GameState> lNextStates;
+	    pState.findPossibleMoves(lNextStates);
+	    
+	    if (lNextStates.size() == 0) return GameState(pState, Move());
 
-    if (lNextStates.size() == 0) return GameState(pState, Move());
+	    /*
+	     * Here you should write your clever algorithms to get the best next move, ie the best
+	     * next state. This skeleton returns a random move instead.
+	     */
 
-    /*
-     * Here you should write your clever algorithms to get the best next move, ie the best
-     * next state. This skeleton returns a random move instead.
-     */
-    return lNextStates[rand() % lNextStates.size()];
+	    int maxScore = INT_MIN;
+	 	int maxIndex = -1;
+	 	for (uint i = 0; i < lNextStates.size(); i++)
+	 	{
+	 		int depth = 6;
+	 		int score = minimax(lNextStates[i], depth, true);
+	 		
+	 		if (maxScore < score)
+	 		{
+	 			maxScore = score;
+	 			maxIndex = i;
+	 		}
+	 	}
+
+	    return lNextStates[maxIndex];
+	}
+
+	int Player::minimax(const GameState &node, int depth, bool maximizingPlayer)
+	{
+		if (depth == 0 || node.isEOG())
+		{
+			return getScore(node);
+		}
+		
+		int bestValue = INT_MAX;
+		if (maximizingPlayer)
+		{
+			bestValue = INT_MIN;
+		}
+
+		std::vector<GameState> children;
+	    node.findPossibleMoves(children);
+
+	    for (uint i = 0; i < children.size(); i++)
+	    {
+	    	int val = minimax(children[i], depth - 1, !maximizingPlayer);
+
+	    	if (maximizingPlayer)
+	    	{
+	    		bestValue = max(bestValue, val);
+	    	}
+	    	else
+	    	{
+	    		bestValue = min(bestValue, val);
+	    	}
+	    }
+
+	    return bestValue;
+	}
+
+	int Player::getScore(const GameState &node)
+	{
+		int score = 0;
+
+		//simple: count number of pieces for each player, subtract mine - yours
+		for (int i = 1; i <= node.cSquares; i++)
+		{
+			auto piece = node.at(i);
+			if (piece & CELL_WHITE)
+			{
+				score++;
+			}
+			else if (piece & CELL_RED)
+			{
+				score--;
+			}
+		}
+
+		return score;
+	}
+
+	/*namespace checkers*/ 
 }
-
-/*namespace checkers*/ }
