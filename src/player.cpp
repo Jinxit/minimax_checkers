@@ -60,7 +60,7 @@ namespace checkers
 		{
 			bestValue = INT_MIN;
 		}
-		if (pDue > Deadline::now())
+		if (pDue < Deadline::now())
 		{
 			return bestValue + (maximizingPlayer ? 1 : -1);
 		}
