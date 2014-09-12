@@ -3,6 +3,8 @@
 #include <limits.h>
 #include <algorithm>
 
+#include <iostream>
+
 namespace checkers
 {
 
@@ -28,8 +30,8 @@ namespace checkers
 	 	int maxIndex = -1;
 	 	for (uint i = 0; i < lNextStates.size(); i++)
 	 	{
-	 		int depth = 6;
-	 		int score = minimax(lNextStates[i], depth, true);
+	 		int depth = 20;
+	 		int score = minimax(lNextStates[i], depth, true, pDue);
 	 		
 	 		if (maxScore < score)
 	 		{
@@ -41,7 +43,7 @@ namespace checkers
 	    return lNextStates[maxIndex];
 	}
 
-	int Player::minimax(const GameState &node, int depth, bool maximizingPlayer)
+	int Player::minimax(const GameState &node, int depth, bool maximizingPlayer, const Deadline &pDue)
 	{
 		std::string nodeString = node.toMessage();
 		if (scoreMap.count(nodeString) > 0)
@@ -58,13 +60,17 @@ namespace checkers
 		{
 			bestValue = INT_MIN;
 		}
+		if (pDue > Deadline::now())
+		{
+			return bestValue + (maximizingPlayer ? 1 : -1);
+		}
 
 		std::vector<GameState> children;
 	    node.findPossibleMoves(children);
 
 	    for (uint i = 0; i < children.size(); i++)
 	    {
-	    	int val = minimax(children[i], depth - 1, !maximizingPlayer);
+	    	int val = minimax(children[i], depth - 1, !maximizingPlayer, pDue);
 
 	    	if (maximizingPlayer)
 	    	{

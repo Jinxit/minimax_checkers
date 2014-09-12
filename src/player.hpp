@@ -21,7 +21,7 @@ public:
     ///\return the next state the board is in after our move
     GameState play(const GameState &pState, const Deadline &pDue);
 
-    int minimax(const GameState &node, int depth, bool max);
+    int minimax(const GameState &node, int depth, bool max, const Deadline &pDue);
     int getScore(const GameState &node);
 
 private:
