@@ -88,6 +88,8 @@ namespace checkers
 	    }
 
 	    scoreMap[nodeString] = bestValue;
+	    // also add the reverse
+	    scoreMap[node.reversed().toMessage()] = -bestValue;
 	    return bestValue;
 	}
 
