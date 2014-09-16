@@ -13,6 +13,11 @@ namespace checkers
 
 	GameState Player::play(const GameState &pState,const Deadline &pDue)
 	{
+		if (firstTime)
+		{
+			due = Deadline::now() + 14 * 1000 * 1000;
+			firstTime = false;
+		}
 	    //std::cerr << "Processing " << pState.toMessage() << std::endl;
 		std::vector<GameState> lNextStates;
 	    pState.findPossibleMoves(lNextStates);
@@ -60,7 +65,7 @@ namespace checkers
 		{
 			bestValue = INT_MIN;
 		}
-		if (pDue < Deadline::now())
+		if (due < Deadline::now())
 		{
 			return bestValue + (maximizingPlayer ? 1 : -1);
 		}

@@ -26,6 +26,8 @@ public:
 
 private:
 	uint8_t currentPlayer;
+	bool firstTime = true;
+	Deadline due;
 	std::unordered_map<std::string, int> scoreMap;
 };
 
