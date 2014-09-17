@@ -33,7 +33,7 @@ namespace checkers
 
 	    int maxScore = INT_MIN;
 	 	int maxIndex = -1;
-	 	for (int depth = 5; depth < 500; depth++)
+	 	for (int depth = 5; depth < 50; depth++)
 	 	{
 	 		if (pDue <= Deadline::now())
 	 		{
