@@ -33,16 +33,24 @@ namespace checkers
 
 	    int maxScore = INT_MIN;
 	 	int maxIndex = -1;
-	 	for (uint i = 0; i < lNextStates.size(); i++)
+	 	for (int depth = 5; depth < 500; depth++)
 	 	{
-	 		int depth = 10;
-	 		int score = alphabeta(lNextStates[i], depth, INT_MIN, INT_MAX, true, pDue);
-	 		
-	 		if (maxScore < score)
+	 		if (pDue <= Deadline::now())
 	 		{
-	 			maxScore = score;
-	 			maxIndex = i;
+	 			break;
 	 		}
+	 		maxScore = INT_MIN;
+	 		maxIndex = -1;
+		 	for (uint i = 0; i < lNextStates.size(); i++)
+		 	{
+		 		int score = alphabeta(lNextStates[i], depth, INT_MIN, INT_MAX, true, pDue);
+		 		
+		 		if (maxScore < score)
+		 		{
+		 			maxScore = score;
+		 			maxIndex = i;
+		 		}
+		 	}
 	 	}
 
 	    return lNextStates[maxIndex];
@@ -60,7 +68,7 @@ namespace checkers
 			return getScore(node);
 		}
 		
-		if (pDue < Deadline::now())
+		/*if (pDue <= Deadline::now())
 		{
 			if (maximizingPlayer)
 			{
@@ -70,7 +78,7 @@ namespace checkers
 			{
 				return INT_MAX - 1;
 			}
-		}
+		}*/
 
 		std::vector<GameState> children;
 	    node.findPossibleMoves(children);
@@ -79,7 +87,7 @@ namespace checkers
     	{
 		    for (uint i = 0; i < children.size(); i++)
 		    {
-	    		alpha = max(alpha, alphabeta(children[i], depth - 1, alpha, beta, !maximizingPlayer, pDue));
+	    		alpha = max(alpha, alphabeta(children[i], depth - 1, alpha, beta, false, pDue));
 	    		if (beta <= alpha)
 	    		{
 	    			break;
@@ -95,7 +103,7 @@ namespace checkers
     	{
 		    for (uint i = 0; i < children.size(); i++)
 		    {
-	    		beta = min(beta, alphabeta(children[i], depth - 1, alpha, beta, !maximizingPlayer, pDue));
+	    		beta = min(beta, alphabeta(children[i], depth - 1, alpha, beta, true, pDue));
 	    		if (beta <= alpha)
 	    		{
 	    			break;
@@ -117,13 +125,20 @@ namespace checkers
 		for (int i = 1; i <= node.cSquares; i++)
 		{
 			auto piece = node.at(i);
+
+			int factor = 1;
+			if (piece & CELL_KING)
+			{
+				factor = 2;
+			}
+
 			if (piece & CELL_WHITE)
 			{
-				score += currentPlayer & CELL_WHITE ? 1 : -1;
+				score += (currentPlayer & CELL_WHITE ? 1 : -1) * factor;
 			}
 			else if (piece & CELL_RED)
 			{
-				score += currentPlayer & CELL_RED ? 1 : -1;
+				score += (currentPlayer & CELL_RED ? 1 : -1) * factor;
 			}
 		}
 
