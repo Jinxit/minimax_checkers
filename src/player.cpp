@@ -33,16 +33,19 @@ namespace checkers
 
 	    int maxScore = INT_MIN;
 	 	int maxIndex = -1;
-	 	for (int depth = 5; depth < 50; depth++)
+	 	for (int depth = 5; depth < 5000; depth++)
 	 	{
 	 		if (pDue <= Deadline::now())
 	 		{
 	 			break;
 	 		}
 	 		maxScore = INT_MIN;
-	 		maxIndex = -1;
 		 	for (uint i = 0; i < lNextStates.size(); i++)
 		 	{
+		 		if (pDue <= Deadline::now())
+		 		{
+		 			break;
+		 		}
 		 		int score = negamax(lNextStates[i], depth, INT_MIN, INT_MAX, 1, pDue);
 		 		
 		 		if (maxScore < score)
