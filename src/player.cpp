@@ -43,7 +43,7 @@ namespace checkers
 	 		maxIndex = -1;
 		 	for (uint i = 0; i < lNextStates.size(); i++)
 		 	{
-		 		int score = alphabeta(lNextStates[i], depth, INT_MIN, INT_MAX, true, pDue);
+		 		int score = negamax(lNextStates[i], depth, INT_MIN, INT_MAX, 1, pDue);
 		 		
 		 		if (maxScore < score)
 		 		{
@@ -56,21 +56,41 @@ namespace checkers
 	    return lNextStates[maxIndex];
 	}
 
-	int Player::alphabeta(const GameState &node, int depth, int alpha, int beta, bool maximizingPlayer, const Deadline &pDue)
+	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue)
 	{
+		int alphaOrig = alpha;
+
 		std::string nodeString = node.toMessage();
-		if (scoreMap.count(nodeString) > 0)
+		if (scoreMap.count(nodeString) > 0 && scoreMap[nodeString].depth >= depth)
 		{
-			return scoreMap[nodeString];
+			Tentry entry = scoreMap[nodeString];
+			if (entry.flag == EXACT)
+			{
+				return entry.value;
+			}
+			else if (entry.flag == LOWERBOUND)
+			{
+				alpha = max(alpha, entry.value);
+			}
+			else if (entry.flag == UPPERBOUND)
+			{
+				beta = min(beta, entry.value);
+			}
+
+			if (alpha >= beta)
+			{
+				return entry.value;
+			}
 		}
+
 		if (depth == 0 || node.isEOG())
 		{
-			return getScore(node);
+			return color * getScore(node);
 		}
 		
-		/*if (pDue <= Deadline::now())
+		if (pDue <= Deadline::now())
 		{
-			if (maximizingPlayer)
+			if (color == 1)
 			{
 				return INT_MIN + 1;
 			}
@@ -78,43 +98,41 @@ namespace checkers
 			{
 				return INT_MAX - 1;
 			}
-		}*/
+		}
 
 		std::vector<GameState> children;
 	    node.findPossibleMoves(children);
 
-    	if (maximizingPlayer)
-    	{
-		    for (uint i = 0; i < children.size(); i++)
-		    {
-	    		alpha = max(alpha, alphabeta(children[i], depth - 1, alpha, beta, false, pDue));
-	    		if (beta <= alpha)
-	    		{
-	    			break;
-	    		}
+	    int bestValue = INT_MIN;
+	    for (uint i = 0; i < children.size(); i++)
+	    {
+	    	int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue);
+	    	bestValue = max(bestValue, val);
+	    	alpha = max(alpha, val);
+	    	if (alpha >= beta)
+	    	{
+	    		break;
 	    	}
+	    }
 
-		    scoreMap[nodeString] = alpha;
-		    // also add the reverse
-		    scoreMap[node.reversed().toMessage()] = -alpha;
-	    	return alpha;
-    	}
-    	else
-    	{
-		    for (uint i = 0; i < children.size(); i++)
-		    {
-	    		beta = min(beta, alphabeta(children[i], depth - 1, alpha, beta, true, pDue));
-	    		if (beta <= alpha)
-	    		{
-	    			break;
-	    		}
-    		}
+	    Tentry entry;
+	    entry.value = bestValue;
+	    if (bestValue <= alphaOrig)
+	    {
+	    	entry.flag = UPPERBOUND;
+	    }
+	    else if (bestValue >= beta)
+	    {
+	    	entry.flag = LOWERBOUND;
+	    }
+	    else
+	    {
+	    	entry.flag = EXACT;
+	    }
+	    entry.depth = depth;
+		scoreMap[nodeString] = entry;
 
-		    scoreMap[nodeString] = beta;
-		    // also add the reverse
-		    scoreMap[node.reversed().toMessage()] = -beta;
-    		return beta;
-    	}
+		return bestValue;
 	}
 
 	int Player::getScore(const GameState &node)
