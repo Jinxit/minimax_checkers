@@ -23,7 +23,7 @@ namespace checkers
 
 	    found = false;
 
-	 	for (int depth = 1; depth < 15; depth++)
+	 	for (int depth = 2; depth < 3; depth++)
 	 	{
 	 		negamax(pState, depth, INT_MIN, INT_MAX, 1, pDue, depth);
 	 		
@@ -33,12 +33,10 @@ namespace checkers
 	 		}
 	 	}
 
-	 	std::cerr << found;
-
 	    return found ? next : GameState(pState, Move());
 	}
 
-	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue, int origDepth)
+	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue, int depthOrig)
 	{
 		int alphaOrig = alpha;
 
@@ -48,6 +46,11 @@ namespace checkers
 			Tentry entry = scoreMap[nodeString];
 			if (entry.flag == EXACT)
 			{
+	    		if (depth == depthOrig - 1)
+	    		{
+		    		next = node;
+		    		found = true;
+	    		}
 				return entry.value;
 			}
 			else if (entry.flag == LOWERBOUND)
@@ -61,6 +64,11 @@ namespace checkers
 
 			if (alpha >= beta)
 			{
+	    		if ((depth == depthOrig - 1))
+	    		{
+		    		next = node;
+		    		found = true;
+	    		}
 				return entry.value;
 			}
 		}
@@ -92,12 +100,12 @@ namespace checkers
 	    int bestValue = INT_MIN;
 	    for (uint i = 0; i < children.size(); i++)
 	    {
-	    	int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue, origDepth);
+	    	int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue, depth);
 	    	bestValue = max(bestValue, val);
 	    	alpha = max(alpha, val);
 	    	if (alpha >= beta)
 	    	{
-	    		if (depth == origDepth)
+	    		if (depth == depthOrig - 1)
 	    		{
 		    		next = node;
 		    		found = true;
@@ -123,6 +131,11 @@ namespace checkers
 	    entry.depth = depth;
 		scoreMap[nodeString] = entry;
 
+		if (depth == depthOrig - 1)
+		{
+    		next = node;
+    		found = true;
+		}
 		return bestValue;
 	}
 
