@@ -97,7 +97,6 @@ namespace checkers
 	    	alpha = max(alpha, val);
 	    	if (alpha >= beta)
 	    	{
-	    		std::cerr << depth << ", " << origDepth << std::endl;
 	    		if (depth == origDepth)
 	    		{
 		    		next = node;
