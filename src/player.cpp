@@ -18,48 +18,27 @@ namespace checkers
 			due = Deadline::now() + 14 * 1000 * 1000;
 			firstTime = false;
 		}
-	    //std::cerr << "Processing " << pState.toMessage() << std::endl;
-		std::vector<GameState> lNextStates;
-	    pState.findPossibleMoves(lNextStates);
-	    
-	    if (lNextStates.size() == 0) return GameState(pState, Move());
-
-	    /*
-	     * Here you should write your clever algorithms to get the best next move, ie the best
-	     * next state. This skeleton returns a random move instead.
-	     */
 
 	    currentPlayer = pState.getNextPlayer();
 
-	    int maxScore = INT_MIN;
-	 	int maxIndex = -1;
-	 	for (int depth = 5; depth < 5000; depth++)
+	    found = false;
+
+	 	for (int depth = 1; depth < 15; depth++)
 	 	{
+	 		negamax(pState, depth, INT_MIN, INT_MAX, 1, pDue, depth);
+	 		
 	 		if (pDue <= Deadline::now())
 	 		{
 	 			break;
 	 		}
-	 		maxScore = INT_MIN;
-		 	for (uint i = 0; i < lNextStates.size(); i++)
-		 	{
-		 		if (pDue <= Deadline::now())
-		 		{
-		 			break;
-		 		}
-		 		int score = negamax(lNextStates[i], depth, INT_MIN, INT_MAX, 1, pDue);
-		 		
-		 		if (maxScore < score)
-		 		{
-		 			maxScore = score;
-		 			maxIndex = i;
-		 		}
-		 	}
 	 	}
 
-	    return lNextStates[maxIndex];
+	 	std::cerr << found;
+
+	    return found ? next : GameState(pState, Move());
 	}
 
-	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue)
+	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue, int origDepth)
 	{
 		int alphaOrig = alpha;
 
@@ -109,11 +88,17 @@ namespace checkers
 	    int bestValue = INT_MIN;
 	    for (uint i = 0; i < children.size(); i++)
 	    {
-	    	int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue);
+	    	int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue, origDepth);
 	    	bestValue = max(bestValue, val);
 	    	alpha = max(alpha, val);
 	    	if (alpha >= beta)
 	    	{
+	    		std::cerr << depth << ", " << origDepth << std::endl;
+	    		if (depth == origDepth)
+	    		{
+		    		next = node;
+		    		found = true;
+	    		}
 	    		break;
 	    	}
 	    }
