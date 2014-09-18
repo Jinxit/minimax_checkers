@@ -65,9 +65,13 @@ namespace checkers
 			}
 		}
 
-		if (depth == 0 || node.isEOG())
+		if (depth == 0)
 		{
 			return color * getScore(node);
+		}
+		else if (node.isEOG())
+		{
+			return color * getScore(node) * 100;
 		}
 		
 		if (pDue <= Deadline::now())
