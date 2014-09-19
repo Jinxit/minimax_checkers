@@ -25,7 +25,7 @@ namespace checkers
 
 	 	for (int depth = 2; depth < 3; depth++)
 	 	{
-	 		negamax(pState, depth, INT_MIN, INT_MAX, 1, pDue, depth);
+	 		negamax(pState, depth, -1000, 1000, 1, pDue, depth);
 	 		
 	 		if (pDue <= Deadline::now())
 	 		{
@@ -85,14 +85,7 @@ namespace checkers
 		
 		if (pDue <= Deadline::now())
 		{
-			if (color == 1)
-			{
-				return INT_MIN + 1;
-			}
-			else
-			{
-				return INT_MAX - 1;
-			}
+			return color * -1000;
 		}
 
 		std::vector<GameState> children;
