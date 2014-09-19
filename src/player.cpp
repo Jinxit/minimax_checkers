@@ -148,19 +148,13 @@ namespace checkers
 		{
 			auto piece = node.at(i);
 
-			int factor = 1;
-			if (piece & CELL_KING)
-			{
-				factor = 2;
-			}
-
 			if (piece & CELL_WHITE)
 			{
-				score += (currentPlayer & CELL_WHITE ? 1 : -1) * factor;
+				score += (currentPlayer & CELL_WHITE ? 1 : -1);
 			}
 			else if (piece & CELL_RED)
 			{
-				score += (currentPlayer & CELL_RED ? 1 : -1) * factor;
+				score += (currentPlayer & CELL_RED ? 1 : -1);
 			}
 		}
 
