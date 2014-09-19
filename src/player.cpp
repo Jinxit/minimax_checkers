@@ -75,7 +75,8 @@ namespace checkers
 
 		if (depth == 0)
 		{
-			return color * getScore(node);
+			int factor = node.isEOG() ? 100 : 1;
+			return color * getScore(node) * factor;
 		}
 		else if (node.isEOG())
 		{
