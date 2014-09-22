@@ -79,11 +79,6 @@ namespace checkers
 		{
 			return color * getScore(node);
 		}
-		
-		if (pDue <= Deadline::now())
-		{
-			return color * -1000;
-		}
 
 		std::vector<GameState> children;
 		node.findPossibleMoves(children);
@@ -92,7 +87,7 @@ namespace checkers
 		for (uint i = 0; i < children.size(); i++)
 		{
 			int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue, depthOrig);
-			if (val >= bestValue)
+			if (val > bestValue)
 			{
 				bestValue = val;
 
