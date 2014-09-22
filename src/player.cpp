@@ -107,14 +107,6 @@ namespace checkers
 			{
 				break;
 			}
-			else
-			{
-				if (depth == depthOrig)
-				{
-					next = children[i];
-					found = true;
-				}	
-			}
 		}
 
 		/*Tentry entry;
@@ -139,7 +131,7 @@ namespace checkers
 			next = node;
 			found = true;
 		}*/
-		
+
 		return bestValue;
 	}
 
