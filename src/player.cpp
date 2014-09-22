@@ -19,21 +19,32 @@ namespace checkers
 			firstTime = false;
 		}
 
-	    currentPlayer = pState.getNextPlayer();
 
-	    found = false;
+		currentPlayer = pState.getNextPlayer();
 
-	 	for (int depth = 2; depth < 3; depth++)
-	 	{
-	 		negamax(pState, depth, -1000, 1000, 1, pDue, depth);
-	 		
-	 		if (pDue <= Deadline::now())
-	 		{
-	 			break;
-	 		}
-	 	}
+		found = false;
 
-	    return found ? next : GameState(pState, Move());
+		for (int depth = 10; depth < 15; depth++)
+		{
+			negamax(pState, depth, -1000, 1000, 1, pDue, depth);
+			
+			if (pDue <= Deadline::now())
+			{
+				break;
+			}
+		}
+		if (found)
+		{
+			return next;
+		}
+		else
+		{
+			std::vector<GameState> lNextStates;
+			pState.findPossibleMoves(lNextStates);
+			return lNextStates[0];
+		}
+
+		return found ? next : lNextStates[0];
 	}
 
 	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue, int depthOrig)
@@ -46,11 +57,11 @@ namespace checkers
 			Tentry entry = scoreMap[nodeString];
 			if (entry.flag == EXACT)
 			{
-	    		if (depth == depthOrig - 1)
-	    		{
-		    		next = node;
-		    		found = true;
-	    		}
+				if (depth == depthOrig - 1)
+				{
+					next = node;
+					found = true;
+				}
 				return entry.value;
 			}
 			else if (entry.flag == LOWERBOUND)
@@ -64,11 +75,11 @@ namespace checkers
 
 			if (alpha >= beta)
 			{
-	    		if ((depth == depthOrig - 1))
-	    		{
-		    		next = node;
-		    		found = true;
-	    		}
+				if ((depth == depthOrig - 1))
+				{
+					next = node;
+					found = true;
+				}
 				return entry.value;
 			}
 		}*/
@@ -89,47 +100,47 @@ namespace checkers
 		}
 
 		std::vector<GameState> children;
-	    node.findPossibleMoves(children);
+		node.findPossibleMoves(children);
 
-	    int bestValue = INT_MIN;
-	    for (uint i = 0; i < children.size(); i++)
-	    {
-	    	int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue, depth);
-	    	bestValue = max(bestValue, val);
-	    	alpha = max(alpha, val);
-	    	if (alpha >= beta)
-	    	{
-	    		break;
-	    	}
-	    }
+		int bestValue = -1000;
+		for (uint i = 0; i < children.size(); i++)
+		{
+			int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue, depthOrig);
+			bestValue = max(bestValue, val);
+			alpha = max(alpha, val);
+			if (alpha >= beta)
+			{
+				break;
+			}
+		}
 
-	    /*Tentry entry;
-	    entry.value = bestValue;
-	    if (bestValue <= alphaOrig)
-	    {
-	    	entry.flag = UPPERBOUND;
-	    }
-	    else if (bestValue >= beta)
-	    {
-	    	entry.flag = LOWERBOUND;
-	    }
-	    else
-	    {
-	    	entry.flag = EXACT;
-	    }
-	    entry.depth = depth;
+		/*Tentry entry;
+		entry.value = bestValue;
+		if (bestValue <= alphaOrig)
+		{
+			entry.flag = UPPERBOUND;
+		}
+		else if (bestValue >= beta)
+		{
+			entry.flag = LOWERBOUND;
+		}
+		else
+		{
+			entry.flag = EXACT;
+		}
+		entry.depth = depth;
 		scoreMap[nodeString] = entry;
 
 		if (depth == depthOrig - 1)
 		{
-    		next = node;
-    		found = true;
+			next = node;
+			found = true;
 		}*/
-    	if (depth == depthOrig - 1)
-    	{
-    		next = node;
-    		found = true;
-    	}
+		if (depth == depthOrig - 1)
+		{
+			next = node;
+			found = true;
+		}
 		return bestValue;
 	}
 
