@@ -139,10 +139,7 @@ namespace checkers
 			next = node;
 			found = true;
 		}*/
-<<<<<<< HEAD
-=======
-
->>>>>>> f81f298791e8bdfa84656ca82fce5cdb86d1a826
+		
 		return bestValue;
 	}
 
