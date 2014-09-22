@@ -41,8 +41,6 @@ public:
 
 private:
 	uint8_t currentPlayer;
-	bool firstTime = true;
-	Deadline due;
 	std::unordered_map<std::string, Tentry> scoreMap;
 	GameState next;
 	bool found;
