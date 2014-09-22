@@ -43,8 +43,6 @@ namespace checkers
 			pState.findPossibleMoves(lNextStates);
 			return lNextStates[0];
 		}
-
-		return found ? next : lNextStates[0];
 	}
 
 	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue, int depthOrig)
