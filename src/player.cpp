@@ -82,14 +82,9 @@ namespace checkers
 			}
 		}*/
 
-		if (depth == 0)
+		if (depth == 0 || node.isEOG())
 		{
-			int factor = node.isEOG() ? 100 : 1;
-			return color * getScore(node) * factor;
-		}
-		else if (node.isEOG())
-		{
-			return color * getScore(node) * 100;
+			return color * getScore(node);
 		}
 		
 		if (pDue <= Deadline::now())
@@ -159,6 +154,11 @@ namespace checkers
 			{
 				score += (currentPlayer & CELL_RED ? 1 : -1);
 			}
+		}
+		
+		if (node.isEOG())
+		{
+			score *= 100;
 		}
 
 		return score;
