@@ -99,7 +99,16 @@ namespace checkers
 		for (uint i = 0; i < children.size(); i++)
 		{
 			int val = -negamax(children[i], depth - 1, -beta, -alpha, -color, pDue, depthOrig);
-			bestValue = max(bestValue, val);
+			if (val >= bestValue)
+			{
+				bestValue = val;
+
+				if (depth == depthOrig)
+				{
+					next = children[i];
+					found = true;
+				}
+			}
 			alpha = max(alpha, val);
 			if (alpha >= beta)
 			{
@@ -129,11 +138,6 @@ namespace checkers
 			next = node;
 			found = true;
 		}*/
-		if (depth == depthOrig - 1)
-		{
-			next = node;
-			found = true;
-		}
 		return bestValue;
 	}
 
@@ -155,7 +159,7 @@ namespace checkers
 				score += (currentPlayer & CELL_RED ? 1 : -1);
 			}
 		}
-		
+
 		if (node.isEOG())
 		{
 			score *= 100;
