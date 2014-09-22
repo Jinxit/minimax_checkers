@@ -82,14 +82,9 @@ namespace checkers
 			}
 		}*/
 
-		if (depth == 0)
+		if (depth == 0 || node.isEOG())
 		{
-			int factor = node.isEOG() ? 100 : 1;
-			return color * getScore(node) * factor;
-		}
-		else if (node.isEOG())
-		{
-			return color * getScore(node) * 100;
+			return color * getScore(node);
 		}
 		
 		if (pDue <= Deadline::now())
@@ -109,6 +104,14 @@ namespace checkers
 			if (alpha >= beta)
 			{
 				break;
+			}
+			else
+			{
+				if (depth == depthOrig)
+				{
+					next = children[i];
+					found = true;
+				}	
 			}
 		}
 
@@ -134,11 +137,7 @@ namespace checkers
 			next = node;
 			found = true;
 		}*/
-		if (depth == depthOrig - 1)
-		{
-			next = node;
-			found = true;
-		}
+
 		return bestValue;
 	}
 
@@ -159,6 +158,11 @@ namespace checkers
 			{
 				score += (currentPlayer & CELL_RED ? 1 : -1);
 			}
+		}
+
+		if (node.isEOG())
+		{
+			score *= 100;
 		}
 
 		return score;
