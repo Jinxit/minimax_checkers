@@ -25,6 +25,7 @@ struct Tentry
 	Flag flag;
 	int depth;
 	int value;
+	GameState node;
 };
 
 class Player

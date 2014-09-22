@@ -40,17 +40,17 @@ namespace checkers
 
 	int Player::negamax(const GameState &node, int depth, int alpha, int beta, int color, const Deadline &pDue, int depthOrig)
 	{
-		//int alphaOrig = alpha;
+		int alphaOrig = alpha;
 
-		/*std::string nodeString = node.toMessage();
+		std::string nodeString = node.toMessage().substr(0, 32);
 		if (scoreMap.count(nodeString) > 0 && scoreMap[nodeString].depth >= depth)
 		{
 			Tentry entry = scoreMap[nodeString];
 			if (entry.flag == EXACT)
 			{
-				if (depth == depthOrig - 1)
+				if (depth == depthOrig)
 				{
-					next = node;
+					next = entry.node;
 					found = true;
 				}
 				return entry.value;
@@ -66,14 +66,14 @@ namespace checkers
 
 			if (alpha >= beta)
 			{
-				if ((depth == depthOrig - 1))
+				if (depth == depthOrig)
 				{
-					next = node;
+					next = entry.node;
 					found = true;
 				}
 				return entry.value;
 			}
-		}*/
+		}
 
 		if (depth == 0 || node.isEOG())
 		{
@@ -109,7 +109,7 @@ namespace checkers
 			}
 		}
 
-		/*Tentry entry;
+		Tentry entry;
 		entry.value = bestValue;
 		if (bestValue <= alphaOrig)
 		{
@@ -124,13 +124,8 @@ namespace checkers
 			entry.flag = EXACT;
 		}
 		entry.depth = depth;
+		entry.node = next;
 		scoreMap[nodeString] = entry;
-
-		if (depth == depthOrig - 1)
-		{
-			next = node;
-			found = true;
-		}*/
 
 		return bestValue;
 	}
