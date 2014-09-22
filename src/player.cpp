@@ -13,13 +13,6 @@ namespace checkers
 
 	GameState Player::play(const GameState &pState,const Deadline &pDue)
 	{
-		if (firstTime)
-		{
-			due = Deadline::now() + 14 * 1000 * 1000;
-			firstTime = false;
-		}
-
-
 		currentPlayer = pState.getNextPlayer();
 
 		found = false;
